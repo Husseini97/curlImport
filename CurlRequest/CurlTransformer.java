@@ -1,11 +1,9 @@
-package curl;
+package CurlRequest;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-
-public class CurlTransformer2 {
-
+public class CurlTransformer {
     public static void generateClassFile(String className, String packageName, CurlRequest request) {
         String classTemplate = "package %s;\n\n" +
                 "public class %s {\n\n" +
@@ -32,9 +30,7 @@ public class CurlTransformer2 {
                 "        return body;\n" +
                 "    }\n" +
                 "}\n";
-
         String classContent = String.format(classTemplate, packageName, className, className);
-
         try {
             FileWriter fileWriter = new FileWriter(className + ".java");
             PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -45,43 +41,34 @@ public class CurlTransformer2 {
             System.out.println("Error generating class file: " + e.getMessage());
         }
     }
-
     public static class CurlRequest {
         private String url;
         private String method;
         private String headers;
         private String body;
-
         public CurlRequest(String url, String method, String headers, String body) {
             this.url = url;
             this.method = method;
             this.headers = headers;
             this.body = body;
         }
-
         public String getUrl() {
             return url;
         }
-
         public String getMethod() {
             return method;
         }
-
         public String getHeaders() {
             return headers;
         }
-
         public String getBody() {
             return body;
         }
     }
-
     public static CurlRequest transformCurl(String curlCommand) {
         String[] curlParts = curlCommand.split("\\s+");
-
         // Extract URL
         String url = curlParts[1].replace("'", "");
-
         // Extract method
         String method = "";
         for (String part : curlParts) {
@@ -90,7 +77,6 @@ public class CurlTransformer2 {
                 break;
             }
         }
-
         // Extract headers
         String headers = "";
         for (int i = 0; i < curlParts.length; i++) {
@@ -98,7 +84,6 @@ public class CurlTransformer2 {
                 headers += curlParts[i + 1] + " ";
             }
         }
-
         // Extract body
         String body = "";
         for (int i = 0; i < curlParts.length; i++) {
@@ -107,16 +92,13 @@ public class CurlTransformer2 {
                 break;
             }
         }
-
         return new CurlRequest(url, method, headers, body);
     }
-
     public static void main(String[] args) {
-        String curlCommand = "curl example";
+        String curlCommand = "curl ";
         CurlRequest request = transformCurl(curlCommand);
-
-        String className = "GeneratedRequest";
-        String packageName = "com.example.generated";
+        String className = "GeneratedRequest1";
+        String packageName = "CurlRequest";
         generateClassFile(className, packageName, request);
     }
 }
