@@ -95,7 +95,7 @@ public class CurlTransformer {
         return new CurlRequest(url, method, headers, body);
     }
     public static void main(String[] args) {
-        String curlCommand = "curl ";
+        String curlCommand = "Curl ";
         CurlRequest request = transformCurl(curlCommand);
         String className = "GeneratedRequest1";
         String packageName = "CurlRequest";
