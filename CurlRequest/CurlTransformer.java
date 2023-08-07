@@ -5,7 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 public class CurlTransformer {
-    public static void generateClassFile(String className, String packageName, CurlRequest request) {
+    public static void generateClassFile(String className, String packageName, CurlRequest curlCommand) {
         String classTemplate = "package %s;\n\n" +
                 "public class %s {\n\n" +
                 "    private String url;\n" +
@@ -118,7 +118,24 @@ public class CurlTransformer {
 
     }
     public static void main(String[] args) {
-        String curlCommand = "curl ";
+        String curlCommand = "curl 'https://api-vendor-test.halan.io/api/v1/vendor-bff/calculate-installment' \\\n" +
+                "  -H 'authority: api-vendor-test.halan.io' \\\n" +
+                "  -H 'accept: application/json, text/plain, */*' \\\n" +
+                "  -H 'accept-language: en-US,en;q=0.9' \\\n" +
+                "  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxYWRlN2IxNTc3NWQ2YmNkYjBlZDRjNCIsInVzZXJuYW1lIjoiYWtva28iLCJicmFuY2hfaWQiOiI2MWFkZTY1ZjU3NzVkNmJjZGIwZWQ0YzMiLCJtZXJjaGFudF9pZCI6IjYxYWRlMzk1NTc3NWQ2YmNkYjBlZDRiYiIsInBlcm1pc3Npb24iOjE5MiwiZXhwIjoxNjkzOTk5MTMwfQ.GZDbyILO082hcUVoO5RRDpFPElRi3J9lTzJzZqVIRCo' \\\n" +
+                "  -H 'content-type: application/json;charset=UTF-8' \\\n" +
+                "  -H 'language: en' \\\n" +
+                "  -H 'origin: https://consumer-vendor-test.halan.io' \\\n" +
+                "  -H 'referer: https://consumer-vendor-test.halan.io/' \\\n" +
+                "  -H 'sec-ch-ua: \"Google Chrome\";v=\"113\", \"Chromium\";v=\"113\", \"Not-A.Brand\";v=\"24\"' \\\n" +
+                "  -H 'sec-ch-ua-mobile: ?0' \\\n" +
+                "  -H 'sec-ch-ua-platform: \"Linux\"' \\\n" +
+                "  -H 'sec-fetch-dest: empty' \\\n" +
+                "  -H 'sec-fetch-mode: cors' \\\n" +
+                "  -H 'sec-fetch-site: same-site' \\\n" +
+                "  -H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36' \\\n" +
+                "  --data-raw '{\"catId\":\"61421bc9d1c9258d373b67a9\",\"subCat\":\"61421bcfd1c9258d373b67d2\",\"price\":3000,\"downPayment\":0,\"periodId\":\"64c90967fe54e84fe0f7dbd4\",\"userId\":\"64cf736168c2113ceac9a6b6\"}' \\\n" +
+                "  --compressed ";
         CurlRequest request = transformCurl(curlCommand);
 
         GeneratedRequest1 generatedRequest = new GeneratedRequest1(
