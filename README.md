@@ -15,9 +15,9 @@ the curl is then extracted into 4 parts
 Then using a Writer Constructor there are 2 classes generated 
 1- A Payload class that holds the body extracted from the curl in this format
 ```
-public class examplePayload
+public class ExamplePayload
 {
-    public static String dispatchLtsLeadPayload()
+    public static String examplePayload()
     {
         return "Here is the body extracted "
 }
