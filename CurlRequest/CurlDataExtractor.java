@@ -25,42 +25,45 @@ public class CurlDataExtractor {
             String body = extractBody(curlCommand);
             String headers = extractHeaders(curlCommand);
 
-            // Generate the class
-            StringBuilder classContent = new StringBuilder();
-            classContent.append("public class CurlData {\n");
-            classContent.append("\n");
-            classContent.append("\tprivate String url = \"" + url + "\";\n");
-            classContent.append("\tprivate String method = \"" + method + "\";\n");
-            classContent.append("\tprivate String body = \"" + body + "\";\n");
-            classContent.append("\tprivate String headers = \"" + headers + "\";\n");
-            classContent.append("\n");
-            classContent.append("\tpublic CurlData() {\n");
-            classContent.append("\t}\n");
-            classContent.append("\n");
-            classContent.append("\tpublic String getUrl() {\n");
-            classContent.append("\t\treturn url;\n");
-            classContent.append("\t}\n");
-            classContent.append("\n");
-            classContent.append("\tpublic String getMethod() {\n");
-            classContent.append("\t\treturn method;\n");
-            classContent.append("\t}\n");
-            classContent.append("\n");
-            classContent.append("\tpublic String getBody() {\n");
-            classContent.append("\t\treturn body;\n");
-            classContent.append("\t}\n");
-            classContent.append("\n");
-            classContent.append("\tpublic String getHeaders() {\n");
-            classContent.append("\t\treturn headers;\n");
-            classContent.append("\t}\n");
-            classContent.append("\n");
-            classContent.append("}\n");
+            // Generate the test class content
+            StringBuilder testClassContent = new StringBuilder();
+            testClassContent.append("import org.junit.Test;\n");
+            testClassContent.append("import static io.restassured.RestAssured.*;\n");
+            testClassContent.append("import static org.hamcrest.Matchers.*;\n");
+            testClassContent.append("\n");
+            testClassContent.append("public class ExampleTest {\n");
+            testClassContent.append("\n");
+            testClassContent.append("\t@Test\n");
+            testClassContent.append("\tpublic void exampleTest() throws IOException {\n");
+            testClassContent.append("\t\tgiven().\n");
+            testClassContent.append("\t\t\tspec(\"" + headers + "\").\n");
+            testClassContent.append("\t\twhen().\n");
+            testClassContent.append("\t\t\t" + method.toLowerCase() + "(\"" + url + "\").\n");
+            testClassContent.append("\t\tthen().\n");
+            testClassContent.append("\t\t\tstatusCode(200);\n");
+            testClassContent.append("\t}\n");
+            testClassContent.append("}\n");
 
-            // Write the class to a new file
-            FileWriter writer = new FileWriter("CurlData.java");
-            writer.write(classContent.toString());
-            writer.close();
+            // Generate the payload class content
+            StringBuilder payloadClassContent = new StringBuilder();
+            payloadClassContent.append("public class ExamplePayload {\n");
+            payloadClassContent.append("\n");
+            payloadClassContent.append("\tpublic static String examplePayload() {\n");
+            payloadClassContent.append("\t\treturn \"" + body + "\";\n");
+            payloadClassContent.append("\t}\n");
+            payloadClassContent.append("}\n");
 
-            System.out.println("CurlData.java file has been generated successfully.");
+            // Write the test class to a new file
+            FileWriter testClassWriter = new FileWriter("ExampleTest.java");
+            testClassWriter.write(testClassContent.toString());
+            testClassWriter.close();
+
+            // Write the payload class to a new file
+            FileWriter payloadClassWriter = new FileWriter("ExamplePayload.java");
+            payloadClassWriter.write(payloadClassContent.toString());
+            payloadClassWriter.close();
+
+            System.out.println("ExampleTest.java and ExamplePayload.java files have been generated successfully.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -106,6 +109,7 @@ public class CurlDataExtractor {
         }
         return "";
     }
+
 
     private static String extractHeaders(String curlCommand) {
         StringBuilder headers = new StringBuilder();
