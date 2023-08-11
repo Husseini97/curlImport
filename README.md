@@ -1,5 +1,16 @@
 # curlImport
-There is a JSON File all that to do is copy and paste the curl you want in the JSON file and then run the main method.
+# Extracting a Curl from any file extension of the 3 (TEXT,YAML, JSON) and there are 3 classes and 3 files for every file type 
+after importing the file with the inputs 
+1-ClassName
+2-Request Spec
+3-Curl 
+4-expected status code 
+5-Output path of the file   
+
+# There are 2 files generated afterward 
+  -Test Class holding (URL, METHOD, HEADERS) 
+  -Payload Class holding (BODY)
+
 
 the curl is then extracted into 4 parts 
 
