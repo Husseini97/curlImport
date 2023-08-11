@@ -1,0 +1,5 @@
+SampleClassName
+curl
+spec
+200
+CurlRequest

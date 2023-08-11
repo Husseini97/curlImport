@@ -4,11 +4,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class CurlDataExtractor {
+public class CurlDataExtractorJSON {
     public static void main(String[] args) {
         try {
             // Read the JSON file
-            BufferedReader reader = new BufferedReader(new FileReader("CurlRequest/file.json"));
+            BufferedReader reader = new BufferedReader(new FileReader("Files/file.json"));
             StringBuilder jsonContent = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
