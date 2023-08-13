@@ -1,11 +1,17 @@
 package CurlRequest;
 
+import org.json.JSONObject;
 import org.testng.annotations.Test;
+import java.util.Map;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.nio.file.Files;
+import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static groovy.json.JsonOutput.toJson;
 
 
@@ -59,7 +65,7 @@ public class CurlDataExtractorText {
             payloadClassContent.append("\n");
             payloadClassContent.append("public class ").append(capitalizeFirstLetter(className)).append("Payload\n");
             payloadClassContent.append("{\n");
-            payloadClassContent.append("\tpublic static String").append(className).append("Payload() \n");
+            payloadClassContent.append("\tpublic static String ").append(className.toLowerCase()).append("Payload() \n");
             payloadClassContent.append("\t{\n");
             payloadClassContent.append("\t\treturn ").append(toJson(body)).append(";\n");
             payloadClassContent.append("\t}\n");
@@ -96,36 +102,69 @@ public class CurlDataExtractorText {
                 return "";
             }
 
-            private static String extractMethod (String curlCommand){
+            private static String extractMethod (String curlCommand) {
+                // Remove backslashes and line breaks
+                String cleanedCommand = curlCommand.replaceAll("\\\\", "").replaceAll("\n", "");
+
+                // Extract method using regular expression
+                Pattern pattern = Pattern.compile("curl .* -X ([A-Za-z]+) .*");
+                Matcher matcher = pattern.matcher(cleanedCommand);
+
+                if (matcher.find()) {
+                    String method = matcher.group(1).toUpperCase();
+                    if (method.equals("PUT") || method.equals("POST") || method.equals("GET")) {
+                        return method;
+                    }
+                }
+
                 if (curlCommand.contains("--data-raw")) {
                     return "POST";
                 }
 
-                String[] tokens = curlCommand.split("\\s+");
-                for (int i = 0; i < tokens.length; i++) {
-                    if (tokens[i].equalsIgnoreCase("-X") && i + 1 < tokens.length) {
-                        String method = tokens[i + 1].toUpperCase();
-                        if (method.equals("PUT") || method.equals("POST") || method.equals("GET")) {
-                            return method;
-                        }
-                    }
-                }
-
-                // Default to GET method if not specified
                 return "GET";
             }
 
+
+
             private static String extractBody (String curlCommand){
-                int beginIndex = curlCommand.indexOf("--data-raw");
+                // Find the index of the beginning of the JSON payload
+                int beginIndex = curlCommand.indexOf("--data-raw '{");
                 if (beginIndex != -1) {
-                    beginIndex += "--data-raw '".length();
+                    beginIndex += "--data-raw '{".length();
+                    // Find the index of the end of the JSON payload
                     int endIndex = curlCommand.indexOf("}'", beginIndex);
                     if (endIndex != -1) {
-                        return curlCommand.substring(beginIndex, endIndex).trim();
+                        // Extract the payload string
+                        String payload = curlCommand.substring(beginIndex, endIndex).trim();
+
+                        // Construct the formatted payload using a StringJoiner
+                        StringJoiner formattedPayload = new StringJoiner(",\n", "{\n", "\n}");
+
+                        // Split the payload into key-value pairs
+                        String[] keyValuePairs = payload.split(",");
+                        for (String pair : keyValuePairs) {
+                            // Split each key-value pair into separate key and value
+                            String[] keyValue = pair.split(":");
+                            if (keyValue.length == 2) {
+                                // Extract the key and value, and format the pair string
+                                String key = keyValue[0].trim().replace("\"", "");
+                                String value = keyValue[1].trim().replace("\"", "");
+                                String formattedPair = "        \"" + key + "\": " + "\"" + value + "\"";
+
+                                // Add the formatted pair to the formatted payload
+                                formattedPayload.add(formattedPair);
+                            }
+                        }
+
+                        // Return the formatted payload as a string
+                        return formattedPayload.toString();
                     }
                 }
+                // If the payload is not found, return an empty string
                 return "";
             }
+
+
 
             private static String extractHeaders (String curlCommand){
                 StringBuilder headers = new StringBuilder();
