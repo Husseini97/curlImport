@@ -5,7 +5,7 @@
 1-ClassName
 2-Request Spec
 3-Curl 
-4-expected status code 
+4-Expected status code 
 5-Output path of the file   
 
 # There are 2 files generated afterward 
