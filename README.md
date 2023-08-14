@@ -25,7 +25,7 @@ the curl is then extracted into 4 parts
 
 
 Then using a Writer Constructor there are 2 classes generated 
-1- A Payload class that holds the body extracted from the curl in this format
+1-Payload class that holds the body extracted from the curl in this format
 ```
 public class ExamplePayload
 {
@@ -34,7 +34,7 @@ public class ExamplePayload
         return "Here is the body extracted "
 }
 ```
-2- A Test class that holds the URL, Method, and Headers extracted from the curl in this format
+2-Test class that holds the URL, Method, and Headers extracted from the curl in this format
 ```
 public class ExampleTest
 {
