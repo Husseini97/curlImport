@@ -35,7 +35,7 @@ public class ExamplePayload
 ```
 2- A Test class that holds the URL, Method, and Headers extracted from the curl in this format
 ```
-public class ExampleTest
+public class CurlRequest.ExampleTest
 {
     @Test
     public static void exampleTest() throws IOException

@@ -3,6 +3,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CurlDataExtractorJSON {
     public static void main(String[] args) {
@@ -23,7 +27,7 @@ public class CurlDataExtractorJSON {
             String url = extractUrl(curlCommand);
             String method = extractMethod(curlCommand);
             String body = extractBody(curlCommand);
-            String headers = extractHeaders(curlCommand);
+            String headers = extractHeaders(curlCommand).toString();
 
             // Generate the test class content
             StringBuilder testClassContent = new StringBuilder();
@@ -31,12 +35,25 @@ public class CurlDataExtractorJSON {
             testClassContent.append("import static io.restassured.RestAssured.*;\n");
             testClassContent.append("import static org.hamcrest.Matchers.*;\n");
             testClassContent.append("\n");
-            testClassContent.append("public class ExampleTest {\n");
+            testClassContent.append("public class CurlRequest.ExampleTest {\n");
             testClassContent.append("\n");
             testClassContent.append("\t@Test\n");
             testClassContent.append("\tpublic void exampleTest() throws IOException {\n");
             testClassContent.append("\t\tgiven().\n");
-            testClassContent.append("\t\t\tspec(\"" + headers + "\").\n");
+
+// Insert new line of headers for every header found
+            Pattern pattern = Pattern.compile("-H '(.*?)'");
+            Matcher matcher = pattern.matcher(curlCommand);
+            while (matcher.find()) {
+                String header = matcher.group(1);
+                String[] headerParts = header.split(": ");
+                if (headerParts.length == 2) {
+                    String key = headerParts[0];
+                    String value = headerParts[1];
+                    testClassContent.append("\t\t\theader(\"" + key+ "\", \"" + value+ "\").\n");
+                }
+            }
+
             testClassContent.append("\t\twhen().\n");
             testClassContent.append("\t\t\t" + method.toLowerCase() + "(\"" + url + "\").\n");
             testClassContent.append("\t\tthen().\n");
@@ -63,7 +80,7 @@ public class CurlDataExtractorJSON {
             payloadClassWriter.write(payloadClassContent.toString());
             payloadClassWriter.close();
 
-            System.out.println("ExampleTest.java and ExamplePayload.java files have been generated successfully.");
+            System.out.println("CurlRequest.ExampleTest.java and ExamplePayload.java files have been generated successfully.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -111,15 +128,24 @@ public class CurlDataExtractorJSON {
     }
 
 
-    private static String extractHeaders(String curlCommand) {
-        StringBuilder headers = new StringBuilder();
-        String[] tokens = curlCommand.split("\\s+");
-        for (int i = 0; i < tokens.length; i++) {
-            if (tokens[i].startsWith("-H")) {
-                headers.append(tokens[i + 1].replace("'", ""));
-                headers.append("\\n"); // Adding a newline character after each header
+    public static Map<String, String> extractHeaders(String curlCommand) {
+        Map<String, String> headersMap = new HashMap<>();
+        Pattern pattern = Pattern.compile("-H '(.*?)'");
+        Matcher matcher = pattern.matcher(curlCommand);
+
+        while (matcher.find()) {
+            String header = matcher.group(1);
+            String[] headerParts = header.split(": ");
+            if (headerParts.length == 2) {
+                String key = headerParts[0];
+                String value = headerParts[1];
+                headersMap.put(key, value);
             }
         }
-        return headers.toString();
+
+        return headersMap;
     }
-}
+    }
+
+
+
