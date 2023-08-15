@@ -1,10 +1,11 @@
-# curlImport
+# curl Import
 # Extracting a Curl from any file extension of the 3 (TEXT,YAML, JSON) and there are 3 classes and 3 files for every file type 
-after importing the file with the inputs 
+**After importing the file with the inputs 
+**
 1-ClassName
 2-Request Spec
 3-Curl 
-4-expected status code 
+4-Expected status code 
 5-Output path of the file   
 
 # There are 2 files generated afterward 
@@ -24,7 +25,7 @@ the curl is then extracted into 4 parts
 
 
 Then using a Writer Constructor there are 2 classes generated 
-1- A Payload class that holds the body extracted from the curl in this format
+1-Payload class that holds the body extracted from the curl in this format
 ```
 public class ExamplePayload
 {
@@ -33,7 +34,7 @@ public class ExamplePayload
         return "Here is the body extracted "
 }
 ```
-2- A Test class that holds the URL, Method, and Headers extracted from the curl in this format
+2-Test class that holds the URL, Method, and Headers extracted from the curl in this format
 ```
 public class CurlRequest.ExampleTest
 {
