@@ -12,8 +12,7 @@
   -Test Class holding (URL, METHOD, HEADERS) 
   -Payload Class holding (BODY)
 
-
-the curl is then extracted into 4 parts 
+curl is then extracted into 4 parts 
 
 -S --------URL
 
