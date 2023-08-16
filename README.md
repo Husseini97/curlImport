@@ -1,4 +1,4 @@
-# curl Import
+# Curl Import
 # Extracting a Curl from any file extension of the 3 (TEXT,YAML, JSON) and there are 3 classes and 3 files for every file type 
 **After importing the file with the inputs 
 **
