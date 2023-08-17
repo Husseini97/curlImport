@@ -35,7 +35,7 @@ public class CurlDataExtractorText {
             String body = extractBody(curlCommand);
             String headers = extractHeaders(curlCommand);
 
-            int expectedStatusCode = expectedStatusCodeStr != null ? Integer.parseInt(expectedStatusCodeStr) : 200;
+            int expectedStatusCode = expectedStatusCodeStr != null ? Integer.parseInt(expectedStatusCodeStr) : 200; // if the user did not write a status code we will expect 200
 
             StringBuilder testClassContent = new StringBuilder();
             testClassContent.append("import org.testng.annotations.Test;\n");
