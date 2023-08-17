@@ -34,7 +34,6 @@ public class CurlDataExtractorText {
             String method = extractMethod(curlCommand);
             String body = extractBody(curlCommand);
             String headers = extractHeaders(curlCommand);
-            String formData = extractFormData(curlCommand);
 
             int expectedStatusCode = expectedStatusCodeStr != null ? Integer.parseInt(expectedStatusCodeStr) : 200;
 
@@ -51,9 +50,6 @@ public class CurlDataExtractorText {
             testClassContent.append("\t\tgiven().\n");
             testClassContent.append("\t\t\tspec(\"").append(spec).append("\").\n");
 
-            if (!formData.isEmpty()) {
-                testClassContent.append("\t\t\tformParams(").append(formData).append(").\n");
-            }
 
             testClassContent.append("\t\twhen().\n");
             testClassContent.append("\t\t\t").append(method.toLowerCase()).append("(\"").append(url).append("\").\n");
@@ -75,11 +71,11 @@ public class CurlDataExtractorText {
             FileWriter testClassWriter = new FileWriter(outputLocation + "/" + capitalizeFirstLetter(className) + "Test.java");
             testClassWriter.write(testClassContent.toString());
             testClassWriter.close();
-
-            FileWriter payloadClassWriter = new FileWriter(outputLocation + "/" + capitalizeFirstLetter(className) + "Payload.java");
-            payloadClassWriter.write(payloadClassContent.toString());
-            payloadClassWriter.close();
-
+            if (!method.equals("GET")) {
+                FileWriter payloadClassWriter = new FileWriter(outputLocation + "/" + capitalizeFirstLetter(className) + "Payload.java");
+                payloadClassWriter.write(payloadClassContent.toString());
+                payloadClassWriter.close();
+            }
             System.out.println(className + ".java file has been generated successfully.");
         }
     }
@@ -120,12 +116,12 @@ public class CurlDataExtractorText {
                 String cleanedCommand = curlCommand.replaceAll("\\\\", "").replaceAll("\n", "");
 
                 // Extract method using regular expression
-                Pattern pattern = Pattern.compile("curl .* -X ([A-Za-z]+) .*");
+                Pattern pattern = Pattern.compile("(PUT|POST|DELETE|GET)");
                 Matcher matcher = pattern.matcher(cleanedCommand);
 
                 if (matcher.find()) {
                     String method = matcher.group(1).toUpperCase();
-                    if (method.equals("PUT") || method.equals("POST") || method.equals("GET")) {
+                    if (method.equals("PUT") || method.equals("POST") || method.equals("DELETE") || method.equals("GET")) {
                         return method;
                     }
                 }
@@ -189,24 +185,10 @@ public class CurlDataExtractorText {
                     }
                 }
                 return headers.toString();
-            }
+            }}
 
 
-    private static String extractFormData(String curlCommand) {
-        StringBuilder formData = new StringBuilder();
-        String[] tokens = curlCommand.split("\\s+");
-        for (int i = 0; i < tokens.length; i++) {
-            if (tokens[i].startsWith("form-data")) {
-                formData.append(tokens[i + 1].replace("'", ""));
-                formData.append(", ");
-            }
-        }
-        if (!formData.isEmpty()) {
-            formData.deleteCharAt(formData.length() - 1);
-        }
-        return formData.toString();
-    }
-}
+
 
 
 

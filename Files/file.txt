@@ -1,0 +1,12 @@
+className: AnotherClass
+curlCommand: curl 'https:
+spec: spec1
+expectedStatusCode: 201
+outputLocation: com/example
+---
+
+className: YetAnotherClass
+curlCommand: cu
+spec: spec2
+expectedStatusCode: 201
+outputLocation: com/example
