@@ -1,47 +1,43 @@
 package CurlRequest;
 
-import org.json.JSONObject;
 import org.testng.annotations.Test;
-import java.util.Map;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static groovy.json.JsonOutput.toJson;
 
-
 public class CurlDataExtractorText {
 
     @Test
     public void generateTestClass() throws IOException {
-        // Read the text file
         String fileContent = new String(Files.readAllBytes(Paths.get("Files/file.txt")));
         String[] curlData = fileContent.split("---");
 
-
         for (String curl : curlData) {
-            String[] lines = curl.trim().split("\n");
+            Map<String, String> keyValuePairs = extractKeyValuePairs(curl);
 
-            String className = lines[0].trim();
-            String curlCommand = lines[1].trim();
-            String spec = lines[2].trim();
-            int expectedStatusCode = Integer.parseInt(lines[3].trim());
-            String outputLocation = lines[4].trim();
+            String className = keyValuePairs.get("className");
+            String curlCommand = keyValuePairs.get("curlCommand");
+            String spec = keyValuePairs.get("spec");
+            String expectedStatusCodeStr = keyValuePairs.get("expectedStatusCode");
+            String outputLocation = keyValuePairs.get("outputLocation");
 
-
-            // Extract relevant data from the curl command
             String url = extractUrl(curlCommand);
             String method = extractMethod(curlCommand);
             String body = extractBody(curlCommand);
             String headers = extractHeaders(curlCommand);
+            String formData = extractFormData(curlCommand);
 
+            int expectedStatusCode = expectedStatusCodeStr != null ? Integer.parseInt(expectedStatusCodeStr) : 200;
 
-            // Generate the test class content
             StringBuilder testClassContent = new StringBuilder();
             testClassContent.append("import org.testng.annotations.Test;\n");
             testClassContent.append("import java.io.*;\n");
@@ -54,13 +50,18 @@ public class CurlDataExtractorText {
             testClassContent.append("\t{\n");
             testClassContent.append("\t\tgiven().\n");
             testClassContent.append("\t\t\tspec(\"").append(spec).append("\").\n");
+
+            if (!formData.isEmpty()) {
+                testClassContent.append("\t\t\tformParams(").append(formData).append(").\n");
+            }
+
             testClassContent.append("\t\twhen().\n");
             testClassContent.append("\t\t\t").append(method.toLowerCase()).append("(\"").append(url).append("\").\n");
             testClassContent.append("\t\tthen().\n");
             testClassContent.append("\t\t\tstatusCode(").append(expectedStatusCode).append(");\n");
             testClassContent.append("\t}\n");
             testClassContent.append("}\n");
-            // Generate the payload class content
+
             StringBuilder payloadClassContent = new StringBuilder();
             payloadClassContent.append("\n");
             payloadClassContent.append("public class ").append(capitalizeFirstLetter(className)).append("Payload\n");
@@ -71,38 +72,50 @@ public class CurlDataExtractorText {
             payloadClassContent.append("\t}\n");
             payloadClassContent.append("}\n");
 
-            // Write the test class to a new file
             FileWriter testClassWriter = new FileWriter(outputLocation + "/" + capitalizeFirstLetter(className) + "Test.java");
             testClassWriter.write(testClassContent.toString());
             testClassWriter.close();
 
-            // Write the payload class to a new file
             FileWriter payloadClassWriter = new FileWriter(outputLocation + "/" + capitalizeFirstLetter(className) + "Payload.java");
             payloadClassWriter.write(payloadClassContent.toString());
             payloadClassWriter.close();
 
             System.out.println(className + ".java file has been generated successfully.");
-
         }
     }
-            public static String capitalizeFirstLetter (String word){
-                if (word == null || word.isEmpty()) {
-                    return word;
-                }
-                return Character.toUpperCase(word.charAt(0)) + word.substring(1);
-            }
 
-            private static String extractUrl (String curlCommand){
-                String[] tokens = curlCommand.split("\\s+");
-                for (int i = 0; i < tokens.length; i++) {
-                    if (tokens[i].startsWith("'") && tokens[i].endsWith("'")) {
-                        return tokens[i].substring(1, tokens[i].length() - 1);
-                    }
-                }
-                return "";
+    private Map<String, String> extractKeyValuePairs(String curlData) {
+        Map<String, String> keyValuePairs = new HashMap<>();
+        String[] lines = curlData.trim().split("\n");
+        for (String line : lines) {
+            String[] parts = line.split(":", 2);
+            if (parts.length == 2) {
+                String key = parts[0].trim();
+                String value = parts[1].trim();
+                keyValuePairs.put(key, value);
             }
+        }
+        return keyValuePairs;
+    }
+    public static String capitalizeFirstLetter(String word) {
+        if (word == null || word.isEmpty()) {
+            return word;
+        }
+        return Character.toUpperCase(word.charAt(0)) + word.substring(1);
+    }
 
-            private static String extractMethod (String curlCommand) {
+    private static String extractUrl(String curlCommand) {
+        String[] tokens = curlCommand.split("\\s+");
+        for (int i = 0; i < tokens.length; i++) {
+            if (tokens[i].startsWith("'") && tokens[i].endsWith("'")) {
+                return tokens[i].substring(1, tokens[i].length() - 1);
+            }
+        }
+        return "";
+    }
+
+
+    private static String extractMethod (String curlCommand) {
                 // Remove backslashes and line breaks
                 String cleanedCommand = curlCommand.replaceAll("\\\\", "").replaceAll("\n", "");
 
@@ -177,6 +190,25 @@ public class CurlDataExtractorText {
                 }
                 return headers.toString();
             }
+
+
+    private static String extractFormData(String curlCommand) {
+        StringBuilder formData = new StringBuilder();
+        String[] tokens = curlCommand.split("\\s+");
+        for (int i = 0; i < tokens.length; i++) {
+            if (tokens[i].startsWith("form-data")) {
+                formData.append(tokens[i + 1].replace("'", ""));
+                formData.append(", ");
+            }
         }
+        if (!formData.isEmpty()) {
+            formData.deleteCharAt(formData.length() - 1);
+        }
+        return formData.toString();
+    }
+}
+
+
+
 
 
