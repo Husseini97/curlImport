@@ -1,4 +1,4 @@
-# curl Import
+# Curl Import
 # Extracting a Curl from any file extension of the 3 (TEXT,YAML, JSON) and there are 3 classes and 3 files for every file type 
 **After importing the file with the inputs 
 **
@@ -12,8 +12,7 @@
   -Test Class holding (URL, METHOD, HEADERS) 
   -Payload Class holding (BODY)
 
-
-the curl is then extracted into 4 parts 
+curl is then extracted into 4 parts 
 
 -S --------URL
 
@@ -25,6 +24,7 @@ the curl is then extracted into 4 parts
 
 
 Then using a Writer Constructor there are 2 classes generated 
+
 1-Payload class that holds the body extracted from the curl in this format
 ```
 public class ExamplePayload
