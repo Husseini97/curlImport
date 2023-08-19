@@ -1,6 +1,8 @@
 package CurlRequest;
 
 import org.testng.annotations.Test;
+
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -41,6 +43,13 @@ public class CurlDataExtractorText {
             String queryParameters = extractQueryParameters(curlCommand);
 
             int expectedStatusCode = expectedStatusCodeStr != null ? Integer.parseInt(expectedStatusCodeStr) : 200; // if the user did not write a status code we will expect 200
+            String packageName = extractPackageName(className); // Derive package name
+            String finalOutputLocation = outputLocation;
+            if (outputLocation.equals("-")) {
+                finalOutputLocation = createPackage(packageName); // Create a new package
+            } else {
+                finalOutputLocation = outputLocation; // Use the specified output location
+            }
 
             StringBuilder testClassContent = new StringBuilder();
             testClassContent.append("import org.testng.annotations.Test;\n");
@@ -94,11 +103,11 @@ public class CurlDataExtractorText {
             payloadClassContent.append("\t}\n");
             payloadClassContent.append("}\n");
 
-            FileWriter testClassWriter = new FileWriter(outputLocation + "/" + capitalizeFirstLetter(className) + "Test.java");
+            FileWriter testClassWriter = new FileWriter(finalOutputLocation + "/" + capitalizeFirstLetter(className) + "Test.java");
             testClassWriter.write(testClassContent.toString());
             testClassWriter.close();
             if (!method.equals("GET")) {
-                FileWriter payloadClassWriter = new FileWriter(outputLocation + "/" + capitalizeFirstLetter(className) + "Payload.java");
+                FileWriter payloadClassWriter = new FileWriter(finalOutputLocation + "/" + capitalizeFirstLetter(className) + "Payload.java");
                 payloadClassWriter.write(payloadClassContent.toString());
                 payloadClassWriter.close();
             }
@@ -232,7 +241,21 @@ public class CurlDataExtractorText {
         return "";
     }
 
+    private String extractPackageName(String className) {
+        return Character.toLowerCase(className.charAt(0)) + className.substring(1);
+    }
 
+    // Create a new package if it doesn't exist
+    private String createPackage(String packageName) {
+        String packagePath = packageName.replace(".", "/");
+        File packageDirectory = new File(packagePath);
+
+        if (!packageDirectory.exists()) {
+            packageDirectory.mkdirs();
+        }
+
+        return packagePath;
+    }
 
 
 
