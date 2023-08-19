@@ -1,31 +1,38 @@
 package CurlRequest;
 
 import org.testng.annotations.Test;
-
+import io.restassured.specification.RequestSpecification;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import RequestSpec.RequestSpec;
 import static groovy.json.JsonOutput.toJson;
 
 public class CurlDataExtractorText {
 
     @Test
     public void generateTestClass() throws IOException {
-        String fileContent = new String(Files.readAllBytes(Paths.get("Files/file.txt")));
-        String[] curlData = fileContent.split("---");
+        List<String> fileLines = Files.readAllLines(Paths.get("Files/file.txt"));
+        StringJoiner joinedLines = new StringJoiner("\n");
+        for (String line : fileLines) {
+            joinedLines.add(line);
+        }
+        String fileContent = joinedLines.toString();
 
+        String[] curlData = fileContent.split("---");
         for (String curl : curlData) {
             Map<String, String> keyValuePairs = extractKeyValuePairs(curl);
 
             String className = keyValuePairs.get("className");
             String curlCommand = keyValuePairs.get("curlCommand");
+
             String spec = keyValuePairs.get("spec");
             String expectedStatusCodeStr = keyValuePairs.get("expectedStatusCode");
             String outputLocation = keyValuePairs.get("outputLocation");
@@ -34,11 +41,11 @@ public class CurlDataExtractorText {
             String method = extractMethod(curlCommand);
             String body = extractBody(curlCommand);
 
-
             int expectedStatusCode = expectedStatusCodeStr != null ? Integer.parseInt(expectedStatusCodeStr) : 200; // if the user did not write a status code we will expect 200
 
             StringBuilder testClassContent = new StringBuilder();
             testClassContent.append("import org.testng.annotations.Test;\n");
+            testClassContent.append("import RequestSpec.RequestSpec.*;\n");
             testClassContent.append("import java.io.*;\n");
             testClassContent.append("import static io.restassured.RestAssured.*;\n");
             testClassContent.append("\n");
@@ -48,8 +55,8 @@ public class CurlDataExtractorText {
             testClassContent.append("\tpublic void ").append(className.toLowerCase()).append("Test() throws IOException \n");
             testClassContent.append("\t{\n");
             testClassContent.append("\t\tgiven().\n");
-            if (spec.equals("-")) {
-                String[] lines = curlCommand.split("\n"); // Split by newline
+            if (spec.equals("-")|| spec.isEmpty()) {
+                String[] lines = curlCommand.split("\\\\"); // Split by newline
                 for (String line : lines) {
                     if (line.trim().startsWith("-H")) {
                         String header = extractHeaderValue(line);
@@ -64,7 +71,7 @@ public class CurlDataExtractorText {
                     }
                 }
             } else {
-                testClassContent.append("\t\t\tspec(\"").append(spec).append("\").\n");
+                testClassContent.append("\t\t\tspec(").append(spec).append(").\n");
             }
             testClassContent.append("\t\twhen().\n");
             testClassContent.append("\t\t\t").append(method.toLowerCase()).append("(\"").append(url).append("\").\n");
@@ -194,9 +201,16 @@ public class CurlDataExtractorText {
             if (endIndex != -1) {
                 return line.substring(startIndex, endIndex);
             }
+        } else if (line.contains("-H ")) {
+            int startIndex = line.indexOf("-H ") + 3;
+            String header = line.substring(startIndex).trim();
+            if (header.startsWith("'") && header.endsWith("'")) {
+                return header.substring(1, header.length() - 1);
+            }
         }
         return null;
     }
+
 
 }
 

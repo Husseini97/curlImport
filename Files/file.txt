@@ -1,5 +1,5 @@
-className: AnotherClass
-curlCommand: curl 'example'
+className: ExampleClass
+curlCommand:curl
 spec:-
-expectedStatusCode: 201
-outputLocation: com/example
+expectedStatusCode:200
+outputLocation:CurlRequest
