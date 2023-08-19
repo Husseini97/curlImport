@@ -45,8 +45,13 @@ public class CurlDataExtractorText {
             int expectedStatusCode = expectedStatusCodeStr != null ? Integer.parseInt(expectedStatusCodeStr) : 200; // if the user did not write a status code we will expect 200
             String packageName = extractPackageName(className); // Derive package name
             String finalOutputLocation = outputLocation;
-            if (outputLocation.equals("-")) {
-                finalOutputLocation = createPackage(packageName); // Create a new package
+            if ("-".equals(outputLocation)) {
+                packageName = createPackage(className.toLowerCase()); // Create package with lowercase class name
+                finalOutputLocation = packageName + "/";
+                String testPackage = packageName + ".tests"; // Package for test classes
+                String payloadPackage = packageName + ".payload"; // Package for payload classes
+                new File(finalOutputLocation + testPackage.replace(".", "/")).mkdirs();
+                new File(finalOutputLocation + payloadPackage.replace(".", "/")).mkdirs();
             } else {
                 finalOutputLocation = outputLocation; // Use the specified output location
             }

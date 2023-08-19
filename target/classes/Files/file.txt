@@ -1,11 +1,5 @@
-className: ExampleClass
-curlCommand:curl 'https://api-vendor-test.halan.io/api/v1/vendor-bff/installment-periods?userId=61d46d5a9c13c60038115bca' \ -H 'authority: api-vendor-test.halan.io' \ -H 'accept: application/json, text/plain, */*' \ -H 'accept-language: en-US,en;q=0.9' \ -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxYWRlN2IxNTc3NWQ2YmNkYjBlZDRjNCIsInVzZXJuYW1lIjoiYWtva28iLCJicmFuY2hfaWQiOiI2MWFkZTY1ZjU3NzVkNmJjZGIwZWQ0YzMiLCJtZXJjaGFudF9pZCI6IjYxYWRlMzk1NTc3NWQ2YmNkYjBlZDRiYiIsInBlcm1pc3Npb24iOjE5MiwiZXhwIjoxNjk1MDY0MjAxfQ.52GHZsxRS5wSAj4_-KYggDvQ77fy6MV_h7saKzKHnYQ' \ -H 'language: en' \ -H 'origin: https://consumer-vendor-test.halan.io' \ -H 'referer: https://consumer-vendor-test.halan.io/' \ -H 'sec-ch-ua: "Not/A)Brand";v="99", "Google Chrome";v="115", "Chromium";v="115"' \ -H 'sec-ch-ua-mobile: ?0' \ -H 'sec-ch-ua-platform: "Linux"' \ -H 'sec-fetch-dest: empty' \ -H 'sec-fetch-mode: cors' \ -H 'sec-fetch-site: same-site' \ -H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36' \ --compressed
-spec:cfLogin()
-expectedStatusCode:201
-outputLocation:CurlRequest
----
-className: ExampleClass2
-curlCommand: curl 'https://api.test.halan.io/loan/customer-view/64dddd485d2beda41ae4f1cf' \ -H 'authority: api.test.halan.io' \ -H 'accept: */*' \ -H 'accept-language: en-US,en;q=0.9' \ -H 'authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNzhjNTZhM2I2MjEzOTk2NTQyMGYzNiIsImJyYW5jaCI6IiIsInJlcXVpcmVCcmFuY2giOmZhbHNlLCJuYW1lIjoia2hhbGlsIiwiYnJhbmNoQ29kZSI6MCwiYXBwTGV2ZWwiOiIiLCJleHAiOjE2OTIzMDU4OTUwMDB9.C-N404RHwi3BfXiffsgofNxYZErFLVGwEThwCxAErMtMgQysZhQFUdL2CXOPDZnsNj-xzSHpOJwB4mSwDyMpUw' \ -H 'origin: https://mohassel.test.halan.io' \ -H 'referer: https://mohassel.test.halan.io/' \ -H 'sec-ch-ua: "Not/A)Brand";v="99", "Google Chrome";v="115", "Chromium";v="115"' \ -H 'sec-ch-ua-mobile: ?0' \ -H 'sec-ch-ua-platform: "Linux"' \ -H 'sec-fetch-dest: empty' \ -H 'sec-fetch-mode: cors' \ -H 'sec-fetch-site: same-site' \ -H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36' \ --compressed
-spec: anotherSpec
+className: eeeexampleClass
+curlCommand:curl --location --request POST 'https://x.com' \ --header 'Content-Type: application/json;charset=UTF-8' \ --header 'serverKey: x' \ --data-raw '{ "customerId": "5ff09d7405d24896adbb37ca", "transactionId": "1-0-1712491-0-1", "orderNumber": "T790774", "creditAmount": 3305.0 }'
+spec: cfLogin()
 expectedStatusCode:200
-outputLocation:CurlRequest
+outputLocation:RequestSpec

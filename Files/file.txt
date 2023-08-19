@@ -1,5 +1,5 @@
-className: ExampleClass
-curlCommand:curl -X P
+className: eeeexampleClass
+curlCommand:curl --location --request POST 'https://x.com' \ --header 'Content-Type: application/json;charset=UTF-8' \ --header 'serverKey: x' \ --data-raw '{ "customerId": "5ff09d7405d24896adbb37ca", "transactionId": "1-0-1712491-0-1", "orderNumber": "T790774", "creditAmount": 3305.0 }'
 spec: cfLogin()
 expectedStatusCode:200
-outputLocation:CurlRequest
+outputLocation:RequestSpec
