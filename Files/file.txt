@@ -1,5 +1,11 @@
 className: ExampleClass
-curlCommand:curl
-spec:-
+curlCommand: curl
+spec:cfLogin()
+expectedStatusCode:201
+outputLocation:CurlRequest
+---
+className: ExampleClass2
+curlCommand: curl
+spec: anotherSpec
 expectedStatusCode:200
 outputLocation:CurlRequest

@@ -1,7 +1,6 @@
 package CurlRequest;
 
 import org.testng.annotations.Test;
-import io.restassured.specification.RequestSpecification;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -12,7 +11,6 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import RequestSpec.RequestSpec;
 import static groovy.json.JsonOutput.toJson;
 
 public class CurlDataExtractorText {
@@ -40,6 +38,7 @@ public class CurlDataExtractorText {
             String url = extractUrl(curlCommand);
             String method = extractMethod(curlCommand);
             String body = extractBody(curlCommand);
+            String queryParameters = extractQueryParameters(curlCommand);
 
             int expectedStatusCode = expectedStatusCodeStr != null ? Integer.parseInt(expectedStatusCodeStr) : 200; // if the user did not write a status code we will expect 200
 
@@ -73,6 +72,11 @@ public class CurlDataExtractorText {
             } else {
                 testClassContent.append("\t\t\tspec(").append(spec).append(").\n");
             }
+            if (!queryParameters.isEmpty()) {
+                testClassContent.append(queryParameters).append("\n");
+            }
+            String queryParams = extractQueryParameters(url);
+            testClassContent.append(queryParams);
             testClassContent.append("\t\twhen().\n");
             testClassContent.append("\t\t\t").append(method.toLowerCase()).append("(\"").append(url).append("\").\n");
             testClassContent.append("\t\tthen().\n");
@@ -211,8 +215,29 @@ public class CurlDataExtractorText {
         return null;
     }
 
+    private String extractQueryParameters(String url) {
+        int index = url.indexOf("?");
+        if (index != -1) {
+            String queryParams = url.substring(index + 1);
+            String[] params = queryParams.split("&");
+            StringBuilder queryBuilder = new StringBuilder();
+            for (String param : params) {
+                String[] keyValue = param.split("=");
+                if (keyValue.length == 2) {
+                    queryBuilder.append("\t\t\tqueryParam(\"").append(keyValue[0]).append("\", \"").append(keyValue[1]).append("\").\n");
+                }
+            }
+            return queryBuilder.toString();
+        }
+        return "";
+    }
+
+
+
+
 
 }
+
 
 
 
