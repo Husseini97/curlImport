@@ -1,0 +1,5 @@
+className: example
+curlCommand: ""
+spec: 'spec '
+expectedStatusCode: 201
+outputLocation: 'CurlRequest'
