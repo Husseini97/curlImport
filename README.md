@@ -49,4 +49,5 @@ public class CurlRequest.ExampleTest
                 statusCode(200);
     }
 }
+in case of request spec sent then the headers are not generated 
 ```
