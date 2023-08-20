@@ -50,4 +50,5 @@ public class CurlRequest.ExampleTest
     }
 }
 in case of request spec sent then the headers are not generated 
+in case of sending the output - then a new package will be generated 
 ```
